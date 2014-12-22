@@ -1,0 +1,75 @@
+import requests
+from bs4 import BeautifulSoup
+import io
+import datetime
+
+i = datetime.datetime.now()
+
+root = "http://www.osgoodeproperties.com/apartments-for-rent/"
+
+with io.open('osgoode.csv', 'a', encoding='utf8') as logfile:
+        logfile.write("Property")
+        logfile.write(",")
+        logfile.write("Suite Type")
+        logfile.write(",")
+        logfile.write("Size")
+        logfile.write(",")
+        logfile.write("Bathrooms")
+        logfile.write(",")
+        logfile.write("Rent")
+        logfile.write(",")
+        logfile.write("Date")
+        logfile.write("\n")
+
+
+for prop in ["brittany-apartments-240-brittany-drive-ottawa",
+             "eastwood-park-apartments-335-mcarthur-ave-ottawa",
+             "kingsview-apartments-1725-riverside-drive-ottawa",
+             "lakeview-apartments-360-croydon-ave-ottawa",
+             "lincoln-park-tower-1330-richmond-road-ottawa",
+             "merivale-manor-1220-merivale-road-ottawa",
+             "parkway-towers-1071-ambleside-drive-ottawa",
+             "pleasant-park-2035-othello-ave-ottawa",
+             "riverside-towers-1735-riverside-drive-ottawa",
+             "riverton-park-89-forward-avenue-ottawa",
+             "the-juliana-apartments-100-bronson-ave-ottawa",
+             "the-oaks-2995-albion-road-north-ottawa",
+             "the-richlin-1500-walkley-rd-ottawa", 
+	     "the-rockcliffe-arms-124-springfield-rd-ottawa"]:
+        
+        url = root + prop
+        r = requests.get(url)
+
+        soup = BeautifulSoup(r.content)
+
+        links = soup.find_all("a")
+
+	
+	
+	
+        g_data1 = soup.find_all("td", {"class": "suite-type-name"})
+        g_data2 = soup.find_all("td", {"class": "suite-sq-ft"})
+        g_data3 = soup.find_all("td", {"class": "suite-bath"})
+        g_data4 = soup.find_all("td", {"class": "suite-rate"})
+        prop_name = soup.find_all("h1", {"class": "property-title"})
+        
+        length = len(g_data1)
+        
+        for x in range(length):
+                #print(g_data1[x].text.strip())
+                #print(g_data2[x].text.strip())
+                #print(g_data3[x].text.strip())
+                #print(g_data4[x].text.strip())
+                with io.open('Osgoode.csv', 'a', encoding='utf8') as logfile:
+                        logfile.write(prop_name[0].text.strip())
+                        logfile.write(",")
+                        logfile.write(g_data1[x].text.strip())
+                        logfile.write(",")
+                        logfile.write(g_data2[x].text.strip())
+                        logfile.write(",")
+                        logfile.write(g_data3[x].text.strip())
+                        logfile.write(",")
+                        logfile.write(g_data4[x].text.strip().split("-",1)[0])
+                        logfile.write(",")
+                        logfile.write("%s-%s-%s" % (i.year, i.month, i.day))
+                        logfile.write("\n")
